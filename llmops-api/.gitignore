@@ -4,3 +4,12 @@ dist
 
 .idea
 
+storage/
+
+tmp/*
+
+venv/*
+
+
+
+
