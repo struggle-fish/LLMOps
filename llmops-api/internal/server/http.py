@@ -5,7 +5,7 @@
 """
 import os
 
-from flask import Flask
+from flask import Flask, request
 from flask_migrate import Migrate
 
 from config import Config
@@ -32,6 +32,17 @@ class Http(Flask):
         # 加载配置类
         self.config.from_object(conf)
 
+        # 仅允许本地前端来源，避免 credentials 模式下使用不安全的通配符来源。
+        self._cors_origins = {
+            origin.strip()
+            for origin in os.getenv(
+                "CORS_ORIGINS",
+                "http://localhost:5173,http://127.0.0.1:5173",
+            ).split(",")
+            if origin.strip()
+        }
+        self.after_request(self._add_cors_headers)
+
         # 异常错误处理
         self.register_error_handler(Exception, self._register_error_handlers)
 
@@ -45,6 +56,21 @@ class Http(Flask):
 
         # 注册应用路由
         router.register_route(self)
+
+    def _add_cors_headers(self, response):
+        """为允许的前端来源补充跨域及预检响应头。"""
+        origin = request.headers.get("Origin")
+        if origin not in self._cors_origins:
+            return response
+
+        response.headers.update({
+            "Access-Control-Allow-Origin": origin,
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            "Vary": "Origin",
+        })
+        return response
 
     def _register_error_handlers(self, error: Exception):
         """统一处理异常"""

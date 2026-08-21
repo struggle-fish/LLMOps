@@ -29,4 +29,13 @@ export default defineConfigWithVueTs(
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 
   skipFormatting,
+
+  // ============ 新增你的自定义 rules ============
+  {
+    name: 'app/custom-rules',
+    files: ['**/*.{vue,ts,mts,tsx}'],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "error"
+    }
+  }
 )
