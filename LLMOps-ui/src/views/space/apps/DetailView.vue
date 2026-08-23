@@ -28,44 +28,65 @@
         <!-- 对话界面 -->
         <div class="scrollbar-w-none h-full min-h-0 overflow-x-hidden overflow-y-scroll px-6 py-7">
           <!-- 人类消息 -->
-          <div class="mb-6 flex flex-row gap-2">
+          <div
+            class="mb-6 flex flex-row gap-2"
+            v-for="message in messages"
+            :key="message.content"
+          >
             <a-avatar
               :style="{ backgroundColor: '#3370ff' }"
               class="shrink-0"
               :size="30"
+              v-if="message.role === 'human'"
             >
               <IconUser />
             </a-avatar>
-            <div class="flex flex-col gap-2">
-              <div class="font-semibold text-gray-700">小铜钱</div>
-              <div
-                class="max-w-max rounded-2xl border border-blue-800 bg-blue-700 px-4 py-3 leading-5 text-white"
-              >
-                能详细讲解下LLM是什么吗
-              </div>
-            </div>
-          </div>
-          <!-- AI消息 -->
-          <div class="mb-6 flex flex-row gap-2">
             <a-avatar
               class="shrink-0"
               :style="{ backgroundColor: '#14a9f8' }"
               :size="30"
+              v-else
             >
               <icon-github />
             </a-avatar>
             <div class="flex flex-col gap-2">
-              <div class="font-semibold text-gray-700">ChatGPT聊天机器人</div>
+              <div class="font-semibold text-gray-700">
+                {{ message.role === 'human' ? '小铜钱' : 'ChatGPT聊天机器人' }}
+              </div>
               <div
+                v-if="message.role === 'human'"
+                class="max-w-max rounded-2xl border border-blue-800 bg-blue-700 px-4 py-3 leading-5 text-white"
+              >
+                {{ message.content }}
+              </div>
+
+              <div
+                v-else
                 class="max-w-max rounded-2xl border border-gray-200 bg-gray-100 px-4 py-3 leading-5 text-gray-900"
               >
-                LLM 即 Large Language
-                Model，大语言模型，是一种基于深度学习的自然语言处理模型，具有很高的语言理解和生成能力，能够处理各式各样的自然语言任务，例如文本生成、问答、翻译、摘要等。它通过在大量的文本数据上进行训练，学习到语言的模式、结构和语义知识。
+                {{ message.content }}
               </div>
             </div>
           </div>
+          <!-- 无数据的时候 -->
+          <div
+            v-if="!messages.length"
+            class="mt-50 flex flex-col items-center justify-center gap-2"
+          >
+            <a-avatar
+              :size="70"
+              shape="square"
+              :style="{ backgroundColor: '#00d0b6' }"
+            >
+              <icon-apps></icon-apps>
+            </a-avatar>
+            <div class="text-2xl font-semibold text-gray-900">ChatGPT聊天机器人</div>
+          </div>
           <!-- AI加载状态 -->
-          <div class="mb-6 flex flex-row gap-2">
+          <div
+            class="mb-6 flex flex-row gap-2"
+            v-if="isLoading"
+          >
             <a-avatar
               class="shrink-0"
               :style="{ backgroundColor: '#14a9f8' }"
@@ -102,10 +123,13 @@
               <input
                 type="text"
                 class="flex-1 outline-0"
+                @keyup.enter="send"
+                v-model="query"
               />
               <a-button
                 shape="circle"
                 type="text"
+                @click="clearMessages"
               >
                 <template #icon>
                   <icon-plus-circle
@@ -117,6 +141,7 @@
               <a-button
                 shape="circle"
                 type="text"
+                @click="send"
               >
                 <template #icon>
                   <icon-send
@@ -135,4 +160,60 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+  import { debugApp } from '@/services/apps'
+  import type { BaseResponse } from '@/models/base'
+  import { Message } from '@arco-design/web-vue'
+  import { ref } from 'vue'
+
+  interface ChatMessage {
+    role: string
+    content: string
+  }
+
+  // 交互所需的数据
+  const query = ref('')
+  const messages = ref<ChatMessage[]>([])
+  const isLoading = ref(false)
+
+  const clearMessages = () => {
+    messages.value = []
+  }
+  const send = async () => {
+    if (!query.value) {
+      Message.error('用户提问不能为空')
+      return
+    }
+    if (isLoading.value) {
+      Message.warning('上一次回复还没有结束，请稍等')
+    }
+
+    try {
+      const humanQuery = query.value
+      messages.value.push({
+        role: 'human',
+        content: humanQuery,
+      })
+
+      query.value = ''
+      // 发起请求
+      isLoading.value = true
+      const response = await debugApp('550e8400-e29b-41d4-a716-446655440000', humanQuery)
+      const { content } = response.data
+      messages.value.push({
+        role: 'ai',
+        content: content,
+      })
+    } catch (error) {
+      console.log(error)
+      if (error && typeof error === 'object' && 'message' in error) {
+        const err = error as BaseResponse<unknown>
+        Message.error(err.message)
+      } else {
+        Message.error('请求异常，请检查网络')
+      }
+    } finally {
+      isLoading.value = false
+    }
+  }
+</script>
