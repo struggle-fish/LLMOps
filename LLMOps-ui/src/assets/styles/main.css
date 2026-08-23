@@ -1,4 +1,8 @@
 @import 'tailwindcss';
 @config '../../../tailwind.config.js';
 
-@import '../main.css'
+@layer base {
+  .scrollbar-w-none {
+    scrollbar-width: none;
+  }
+}

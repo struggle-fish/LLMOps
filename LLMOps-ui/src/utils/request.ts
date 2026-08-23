@@ -51,11 +51,12 @@ const baseFetch = <T>(url: string, fetchOptions: FetchOptionType): Promise<T> =>
 
     delete options.params
   }
-
+  // 处理post传递的数据
   if (body) {
     options.body = JSON.stringify(body)
   }
   console.log(urlWithPrefix, options)
+  // 同时发起两个Promise请求，看谁先返回，就先结束
   return Promise.race([
     // 使用定时器来检测是否超时
     new Promise((resolve, reject) => {

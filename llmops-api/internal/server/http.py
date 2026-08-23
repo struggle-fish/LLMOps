@@ -7,7 +7,7 @@ import os
 
 from flask import Flask, request
 from flask_migrate import Migrate
-
+from flask_cors import CORS
 from config import Config
 from internal.exception import CustomException
 from internal.router import Router
@@ -32,23 +32,22 @@ class Http(Flask):
         # 加载配置类
         self.config.from_object(conf)
 
-        # 仅允许本地前端来源，避免 credentials 模式下使用不安全的通配符来源。
-        self._cors_origins = {
-            origin.strip()
-            for origin in os.getenv(
-                "CORS_ORIGINS",
-                "http://localhost:5173,http://127.0.0.1:5173",
-            ).split(",")
-            if origin.strip()
-        }
-        self.after_request(self._add_cors_headers)
-
         # 异常错误处理
         self.register_error_handler(Exception, self._register_error_handlers)
 
         # flask扩展
         db.init_app(self)
         migrate.init_app(self, db, 'internal/migrations')
+
+        # 解决前后端跨域问题
+        CORS(self, resources={
+            r"/*": {
+                "origins": "*",
+                "supports_credentials": True,
+                # "methods": ["GET", "POST"],
+                # "allow_headers": ["Content-Type"]
+            }
+        })
         # 自动创建数据库表
         # with self.app_context():
         #     _ = App()

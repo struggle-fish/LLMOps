@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "pinia": "^4.0.2",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "vue": "^3.5.40",
     "vue-router": "^5.2.0"
   },
