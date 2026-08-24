@@ -7,17 +7,20 @@ import os
 
 from dataclasses import dataclass
 from uuid import UUID
-from flask import request
+
 from injector import inject
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
-from openai import OpenAI
+
 from langchain_core.output_parsers import StrOutputParser
 
 from internal.exception import FailException
 from internal.schema.app_schema import CompletionReq
 from internal.service import AppService
 from pkg.response import success_json, validate_error_json, success_message
+import dotenv
+
+dotenv.load_dotenv()
 
 
 @inject
@@ -75,7 +78,7 @@ class AppHandler:
         # content = completion.choices[0].message.content
         """
         prompt = ChatPromptTemplate.from_template("{query}")
-        llm = ChatOpenAI()
+        llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"), )
         parser = StrOutputParser()
 
         # 构建链

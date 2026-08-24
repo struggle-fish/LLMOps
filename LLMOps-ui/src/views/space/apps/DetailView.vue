@@ -165,11 +165,14 @@
   import type { BaseResponse } from '@/models/base'
   import { Message } from '@arco-design/web-vue'
   import { ref } from 'vue'
+  import { useRoute } from 'vue-router'
 
   interface ChatMessage {
     role: string
     content: string
   }
+
+  const route = useRoute()
 
   // 交互所需的数据
   const query = ref('')
@@ -198,7 +201,7 @@
       query.value = ''
       // 发起请求
       isLoading.value = true
-      const response = await debugApp('550e8400-e29b-41d4-a716-446655440000', humanQuery)
+      const response = await debugApp(route.params.app_id as string, humanQuery)
       const { content } = response.data
       messages.value.push({
         role: 'ai',
