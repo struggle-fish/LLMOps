@@ -6,13 +6,16 @@
 import os
 
 from dataclasses import dataclass
+from operator import itemgetter
 from uuid import UUID
 
 from injector import inject
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
-
+from langchain_classic.memory import ConversationBufferWindowMemory
 from langchain_core.output_parsers import StrOutputParser
+from langchain_community.chat_message_histories import FileChatMessageHistory
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 
 from internal.exception import FailException
 from internal.schema.app_schema import CompletionReq
@@ -21,6 +24,10 @@ from pkg.response import success_json, validate_error_json, success_message
 import dotenv
 
 dotenv.load_dotenv()
+
+file_path = "./storage/memory/chat_history.txt"
+# 重点：先创建父文件夹
+os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
 
 @inject
@@ -77,14 +84,34 @@ class AppHandler:
 
         # content = completion.choices[0].message.content
         """
-        prompt = ChatPromptTemplate.from_template("{query}")
+
+        # 创建prompt与记忆功能
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", "你是一个强大的聊天机器人，能根据用户的提问回复对应的问题"),
+            MessagesPlaceholder("history"),
+            ("human", "{query}")
+        ])
+        memory = ConversationBufferWindowMemory(
+            k=3,
+            input_key="query",
+            output_key="output",
+            return_messages=True,
+            chat_memory=FileChatMessageHistory(file_path)
+        )
         llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"), )
+
         parser = StrOutputParser()
 
         # 构建链
-        chain = prompt | llm | parser
+        chain = RunnablePassthrough.assign(
+            history=RunnableLambda(memory.load_memory_variables) | itemgetter("history")
+        ) | prompt | llm | parser
 
-        content = chain.invoke({"query": req.query.data})
+        chain_input = {"query": req.query.data}
+        content = chain.invoke(chain_input)
+
+        # 用户的输入，和AI 的输出保存到记忆中
+        memory.save_context(chain_input, {"output": content})
 
         return success_json({"content": content})
 
