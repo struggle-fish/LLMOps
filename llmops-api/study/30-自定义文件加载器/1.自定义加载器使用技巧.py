@@ -1,0 +1,55 @@
+"""
+@Time   : 2026/9/21 18:04
+@Author : jzy
+@File   : 1.自定义加载器使用技巧.py.py
+"""
+from typing import Iterator, AsyncIterator
+
+from langchain_core.document_loaders import BaseLoader
+from langchain_core.documents import Document
+
+
+class CustomDocumentLoader(BaseLoader):
+    """自定义加载器示例"""
+
+    def __init__(self, file_path: str) -> None:
+        self.file_path = file_path
+
+    def lazy_load(self) -> Iterator[Document]:
+        """懒加载文档"""
+        # 1. 读取文件内容
+        with open(self.file_path, encoding="utf-8") as f:
+            line_number = 0
+            # 2. 提取文件的每一行
+            for line in f:
+                # 3. 将每一行生成一个 Document实例并通过yield返回
+                yield Document(
+                    page_content=line,
+                    metadata={
+                        "source": self.file_path,
+                        "line_number": line_number
+                    }
+                )
+                line_number += 1
+
+    async def alazy_load(self) -> AsyncIterator[Document]:
+        import aiofiles
+        async with aiofiles.open(self.file_path, encoding="utf-8") as f:
+            line_number = 0
+            async for line in f:
+                yield Document(
+                    page_content=line,
+                    metadata={
+                        "source": self.file_path,
+                        "line_number": line_number
+                    }
+                )
+                line_number += 1
+
+
+loader = CustomDocumentLoader('./喵喵.txt')
+documents = loader.load()
+
+print(documents)
+print(len(documents))
+print(documents[0].metadata)
