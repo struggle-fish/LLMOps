@@ -24,6 +24,9 @@ from internal.exception import FailException
 from internal.schema.app_schema import CompletionReq
 from internal.service import AppService
 from pkg.response import success_json, validate_error_json, success_message
+
+from internal.core.tools.builtin_tools.providers import ProviderFactory
+
 import dotenv
 
 dotenv.load_dotenv()
@@ -38,6 +41,7 @@ os.makedirs(os.path.dirname(file_path), exist_ok=True)
 class AppHandler:
     """应用控制器"""
     app_service: AppService
+    provider_factory: ProviderFactory
 
     def create_app(self):
         """调用服务创建新的app记录"""
@@ -135,4 +139,8 @@ class AppHandler:
     def ping(self):
         # 处理ping请求的逻辑
         # return {"ping": "pong"}
-        raise FailException("ping请求失败")
+        google_serper = self.provider_factory.get_tool('google', 'google_serper')()
+        print(google_serper)
+        print(google_serper.invoke("2024年北京半程马拉松前3名成绩是多少"))
+        return success_json()
+        # raise FailException("ping请求失败")
