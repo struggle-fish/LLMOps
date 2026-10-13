@@ -26,7 +26,7 @@ class ProviderEntity(BaseModel):
 class Provider(BaseModel):
     """服务提供商，在该类下，可以获取到该服务提供商的所有工具，描述，图标等多个信息"""
     name: str  # 服务提供商的名字
-    position: str  # 服务提供商的位置
+    position: int  # 服务提供商的排序序号，与工厂生成的整数索引保持一致
     provider_entity: ProviderEntity  # 服务提供商的实体
     tool_func_map: dict[str, Any] = {}  # 服务提供商的工具函数映射关系
     tool_entity_map: dict[str, ToolEntity] = {}  # 服务提供商的工具实体映射关系
@@ -59,8 +59,8 @@ class Provider(BaseModel):
         entities_path = os.path.dirname(current_path)
         provider_path = os.path.join(os.path.dirname(entities_path), "providers", self.name)
 
-        # 2.组装获取position.yaml的数据
-        position_yaml_path = os.path.join(provider_path, "position.yaml")
+        # 2.读取 positions.yaml，按配置顺序加载服务提供商的工具
+        position_yaml_path = os.path.join(provider_path, "positions.yaml")
         with open(position_yaml_path, encoding="utf-8") as f:
             position_yaml_data = yaml.safe_load(f)
 

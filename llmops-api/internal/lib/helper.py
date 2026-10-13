@@ -4,11 +4,11 @@
 @File   : helper.py
 """
 
-import imaplib
+import importlib
 from typing import Any
 
 
 def dynamic_import(module_name: str, symbol_name: str) -> Any:
     """动态导入模块中的函数"""
-    module = imaplib.import_module(module_name)
+    module = importlib.import_module(module_name)
     return getattr(module, symbol_name)
