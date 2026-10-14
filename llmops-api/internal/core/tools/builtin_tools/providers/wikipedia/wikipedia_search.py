@@ -1,0 +1,15 @@
+"""
+@Time   : 2026/10/14 14:45
+@Author : jzy
+@File   : wikipedia_search.py
+"""
+from langchain_community.tools import WikipediaQueryRun
+from langchain_community.utilities import WikipediaAPIWrapper
+from langchain_core.tools import BaseTool
+
+
+def wikipedia_search(**kwargs) -> BaseTool:
+    """返回维基百科搜索工具"""
+    return WikipediaQueryRun(
+        api_wrapper=WikipediaAPIWrapper()
+    )

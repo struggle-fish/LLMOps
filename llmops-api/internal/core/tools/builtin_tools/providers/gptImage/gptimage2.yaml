@@ -1,0 +1,24 @@
+name: gptimage2
+label: ChatGPT图像生成2
+description: 这是一个用于生成图像的工具，基于ChatGPT的图像生成模型。它可以根据用户提供的文本描述生成相应的图像。
+params:
+  - name: size
+    label: 图像尺寸
+    type: select
+    required: true
+    options:
+      - value: 256x256
+        label: "(方)256x256"
+      - value: 1792x1024
+        label: "(横屏)1792x1024"
+      - value: 1024x1792
+        label: "(竖屏)1024x1792"
+  - name: style
+    label: 图像风格
+    type: select
+    required: true
+    options:
+      - value: vivid
+        label: "生动"
+      - value: natural
+        label: "自然"

@@ -138,9 +138,13 @@ class AppHandler:
 
     def ping(self):
         # 处理ping请求的逻辑
-        # return {"ping": "pong"}
+
+        """"
         google_serper = self.provider_factory.get_tool('google', 'google_serper')()
         print(google_serper)
         print(google_serper.invoke("2024年北京半程马拉松前3名成绩是多少"))
+        """
+        google = self.provider_factory.get_provider('google')
+        google_serper_entity = google.get_tool_entity('google_serper')
+        print(google_serper_entity)
         return success_json()
-        # raise FailException("ping请求失败")

@@ -1,0 +1,4 @@
+name: current_time
+label: 获取当前时间
+description: 这是一个用于获取当前时间的工具。它可以返回当前的日期和时间信息。
+params: [ ]

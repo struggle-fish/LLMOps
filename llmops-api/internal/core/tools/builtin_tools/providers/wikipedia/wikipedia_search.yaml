@@ -1,0 +1,4 @@
+name: wikipedia_search
+label: Wikipedia搜索
+description: 这是一个Wikipedia搜索工具。它可以帮助你在Wikipedia上搜索相关信息
+params: [ ]

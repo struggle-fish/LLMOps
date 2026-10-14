@@ -7,7 +7,7 @@ import os.path
 from typing import Any
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from internal.core.tools.builtin_tools.entities import ToolEntity
 from internal.lib.helper import dynamic_import
@@ -28,8 +28,8 @@ class Provider(BaseModel):
     name: str  # 服务提供商的名字
     position: int  # 服务提供商的排序序号，与工厂生成的整数索引保持一致
     provider_entity: ProviderEntity  # 服务提供商的实体
-    tool_func_map: dict[str, Any] = {}  # 服务提供商的工具函数映射关系
-    tool_entity_map: dict[str, ToolEntity] = {}  # 服务提供商的工具实体映射关系
+    tool_func_map: dict[str, Any] = Field(default_factory=dict)  # 服务提供商的工具函数映射关系
+    tool_entity_map: dict[str, ToolEntity] = Field(default_factory=dict)  # 服务提供商的工具实体映射关系
 
     def __init__(self, **kwargs):
         """构造函数，完成对应服务提供商的初始化"""
