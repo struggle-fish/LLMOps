@@ -6,4 +6,6 @@
 
 from .app_service import AppService
 
-__all__ = ["AppService"]
+from .builtin_tool_service import BuiltinToolService
+
+__all__ = ["AppService", "BuiltinToolService"]

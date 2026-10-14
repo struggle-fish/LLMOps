@@ -9,12 +9,15 @@ from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
 
+from internal.lib.helper import add_attribute
+
 
 class DDGInput(BaseModel):
     """DuckDuckGo搜索工具的输入参数类"""
     query: str = Field(..., description="需要搜索的查询语句")
 
 
+@add_attribute("args_schema", DDGInput)
 def duckduckgo_search(**kwargs) -> BaseTool:
     """一个用于DuckDuckGo搜索的工具"""
     return DuckDuckGoSearchRun(

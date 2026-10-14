@@ -1,7 +1,7 @@
 """
 @Time   : 2026/10/12 22:24
 @Author : jzy
-@File   : provider_factory.py
+@File   : builtin_provider_manager.py
 """
 import os.path
 from typing import Any
@@ -14,7 +14,7 @@ from internal.core.tools.builtin_tools.entities import ProviderEntity, Provider
 
 @inject
 @singleton
-class ProviderFactory:
+class BuiltinProviderManager:
     """服务提供商工厂类"""
     provider_map: dict[str, Provider] = {}
 

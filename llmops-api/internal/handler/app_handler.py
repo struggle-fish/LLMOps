@@ -20,12 +20,13 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_community.chat_message_histories import FileChatMessageHistory
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda, RunnableConfig
 
+from internal.core.tools.builtin_tools import providers
 from internal.exception import FailException
 from internal.schema.app_schema import CompletionReq
 from internal.service import AppService
 from pkg.response import success_json, validate_error_json, success_message
 
-from internal.core.tools.builtin_tools.providers import ProviderFactory
+from internal.core.tools.builtin_tools.providers import BuiltinProviderManager
 
 import dotenv
 
@@ -41,7 +42,7 @@ os.makedirs(os.path.dirname(file_path), exist_ok=True)
 class AppHandler:
     """应用控制器"""
     app_service: AppService
-    provider_factory: ProviderFactory
+    provider_factory: BuiltinProviderManager
 
     def create_app(self):
         """调用服务创建新的app记录"""
@@ -144,7 +145,10 @@ class AppHandler:
         print(google_serper)
         print(google_serper.invoke("2024年北京半程马拉松前3名成绩是多少"))
         """
+        """
         google = self.provider_factory.get_provider('google')
         google_serper_entity = google.get_tool_entity('google_serper')
         print(google_serper_entity)
-        return success_json()
+        """
+        providers = self.provider_factory.get_provider_entities()
+        return success_json({"providers": [provider.dict() for provider in providers]})
