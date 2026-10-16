@@ -14,3 +14,7 @@ venv/*
 .codegraph
 
 .zedignore
+
+
+__pycache__/
+*.pyc

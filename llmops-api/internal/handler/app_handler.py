@@ -123,7 +123,7 @@ class AppHandler:
             return_messages=True,
             chat_memory=FileChatMessageHistory(file_path)
         )
-        llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"), )
+        llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"), timeout=30, max_retries=0)
 
         parser = StrOutputParser()
 
