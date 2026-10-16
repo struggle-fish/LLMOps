@@ -13,8 +13,7 @@ from internal.exception import CustomException
 from internal.router import Router
 from pkg.response import json, Response, HttpCode
 from pkg.sqlalchemy import SQLAlchemy
-
-from internal.model import App
+from werkzeug.exceptions import HTTPException
 
 
 class Http(Flask):
@@ -73,12 +72,15 @@ class Http(Flask):
 
     def _register_error_handlers(self, error: Exception):
         """统一处理异常"""
+        if isinstance(error, HTTPException):
+            return error
+
         # 1.异常是否是自定义异常，如果是提取message和code
         if isinstance(error, CustomException):
             return json(
                 Response(
                     code=error.code,
-                    message=error.message,
+                    msg=error.message,
                     data=error.data if error.data is not None else {}
                 )
             )
@@ -91,7 +93,7 @@ class Http(Flask):
             return json(
                 Response(
                     code=HttpCode.FAIL,
-                    message=str(error),
+                    msg=str(error),
                     data={}
                 )
             )

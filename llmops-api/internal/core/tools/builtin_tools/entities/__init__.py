@@ -6,5 +6,6 @@
 
 from .tool_entity import ToolEntity
 from .provider_entity import Provider, ProviderEntity
+from .category_entity import CategoryEntity
 
-__all__ = ['Provider', 'ProviderEntity', 'ToolEntity']
+__all__ = ['Provider', 'ProviderEntity', 'ToolEntity', 'CategoryEntity']

@@ -3,34 +3,40 @@
   description: 谷歌服务提供商，涵盖了谷歌搜索工具。
   icon: icon.svg
   background: "#E5E7EB"
-  category: 网络搜索
+  category: search
+  created_at: 1722498386
 - name: time
   label: 时间
   description: 一个用于获取当前时间的工具。
   icon: icon.svg
   background: "#E5E7EB"
-  category: 实用工具
+  category: tool
+  created_at: 1722498386
 - name: duckduckgo
   label: DuckDuckGo
   description: DuckDuckGo搜索引擎提供商，专注于隐私保护的搜索工具。
   icon: icon.svg
   background: "#FFFFFF"
-  category: 网络搜索
+  category: search
+  created_at: 1722498386
 - name: gptImage
   label: ChatGPT图像生成
   description: 一个用于生成图像的工具，基于ChatGPT的图像生成模型。
   icon: icon.png
   background: "#E5E7EB"
-  category: 文生图
+  category: image
+  created_at: 1722498386
 - name: gaode
   label: 高德工具包
   description: 内置了高德天气预报和ip查询功能。
   icon: icon.png
   background: "#E5E7EB"
-  category: 实用工具
+  category: tool
+  created_at: 1722498386
 - name: wikipedia
   label: 维基百科
   description: 维基百科搜索工具，提供对维基百科内容的访问和搜索功能。
   icon: icon.svg
   background: "#FFFFFF"
-  category: 百科全书
+  category: other
+  created_at: 1722498386

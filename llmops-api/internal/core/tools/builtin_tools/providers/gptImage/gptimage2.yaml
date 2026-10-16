@@ -6,9 +6,10 @@ params:
     label: 图像尺寸
     type: select
     required: true
+    default: 1024x1024
     options:
-      - value: 256x256
-        label: "(方)256x256"
+      - value: 1024x1024
+        label: "(方)1024x1024"
       - value: 1792x1024
         label: "(横屏)1792x1024"
       - value: 1024x1792
@@ -17,6 +18,7 @@ params:
     label: 图像风格
     type: select
     required: true
+    default: vivid
     options:
       - value: vivid
         label: "生动"
