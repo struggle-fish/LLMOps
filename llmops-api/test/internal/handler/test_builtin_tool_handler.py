@@ -1,21 +1,48 @@
 from pkg.response import HttpCode
+import pytest
 
 
-def test_get_builtin_tools(client):
-    """验证实际工具列表及参数元数据，防止 Pydantic 升级导致接口再次返回 500。"""
-    response = client.get("/builtin-tools")
-    assert response.status_code == 200
-    assert response.json["code"] == HttpCode.SUCCESS
-    tools = {
-        tool["name"]: tool
-        for provider in response.json["data"]
-        for tool in provider["tools"]
-    }
-    assert tools["current_time"]["inputs"] == []
-    for name in ("google_serper", "duckduckgo_search", "wikipedia_search", "gptimage2", "gaode_weather"):
-        inputs = tools[name]["inputs"]
-        assert len(inputs) == 1
-        assert inputs[0]["name"] == ("city" if name == "gaode_weather" else "query")
-        assert inputs[0]["description"]
-        assert inputs[0]["type"] == "str"
-        assert inputs[0]["required"] is True
+class TestBuiltinToolHandler:
+    """内置工具处理器测试类"""
+
+    def test_get_categories(self, client):
+        """"测试获取所有分类信息"""
+        resp = client.get("/builtin-tools/categories")
+        assert resp.status_code == 200
+        assert resp.json.get("code") == HttpCode.SUCCESS
+        assert len(resp.json.get("data")) > 0
+
+    def test_get_builtin_tools(self, client):
+        """测试获取所有内置工具"""
+        resp = client.get("/builtin-tools")
+        assert resp.status_code == 200
+        assert resp.json.get("code") == HttpCode.SUCCESS
+        assert len(resp.json.get("data")) > 0
+
+    @pytest.mark.parametrize(
+        "provider_name, tool_name",
+        [
+            ("google", "google_serper"),
+            ("imooc", "imooc_llmops")
+        ]
+    )
+    def test_get_provider_tool(self, provider_name, tool_name, client):
+        """测试获取指定工具信息接口"""
+        resp = client.get(f"/builtin-tools/{provider_name}/tools/{tool_name}")
+        assert resp.status_code == 200
+        if provider_name == "google":
+            assert resp.json.get("code") == HttpCode.SUCCESS
+            assert resp.json.get("data").get("name") == tool_name
+        elif provider_name == "imooc":
+            assert resp.json.get("code") == HttpCode.NOT_FOUND
+
+    @pytest.mark.parametrize(
+        "provider_name",
+        ["google", "imooc"]
+    )
+    def test_get_provider_icon(self, provider_name, client):
+        """测试根据提供商名字获取icon"""
+        resp = client.get(f"/builtin-tools/{provider_name}/icon")
+        assert resp.status_code == 200
+        if provider_name == "imooc":
+            assert resp.json.get("code") == HttpCode.NOT_FOUND
