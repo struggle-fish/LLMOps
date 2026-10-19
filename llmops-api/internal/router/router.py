@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from flask import Flask, Blueprint
 from injector import inject
 
-from internal.handler import AppHandler, BuiltinToolHandler
+from internal.handler import AppHandler, BuiltinToolHandler, ApiToolHandler
 
 
 @inject
@@ -17,6 +17,7 @@ class Router:
     """路由器"""
     app_handler: AppHandler
     builtin_tool_handler: BuiltinToolHandler
+    api_tool_handler: ApiToolHandler
 
     def register_route(self, app: Flask):
         """注册路由"""
@@ -40,5 +41,9 @@ class Router:
                         view_func=self.builtin_tool_handler.get_provider_icon, methods=['GET'])
         bp.add_url_rule("/builtin-tools/categories", view_func=self.builtin_tool_handler.get_categories,
                         methods=['GET'])
+
+        # 4. 自定义API插件模块
+        bp.add_url_rule("/api-tools/validate-openapi-schema", view_func=self.api_tool_handler.validate_openai_schema,
+                        methods=['POST'])
         # 4. 将蓝图注册到Flask应用中
         app.register_blueprint(bp)
