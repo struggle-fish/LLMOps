@@ -11,7 +11,8 @@ from injector import inject
 from internal.schema.api_tool_schema import (
     ValidateOpenAPISchemaReq,
     CreateApiToolReq,
-    GetApiToolProviderResq
+    GetApiToolProviderResq,
+    GetApiToolResp
 )
 from pkg.response import validate_error_json, success_json, success_message
 from internal.service import ApiToolService
@@ -32,6 +33,12 @@ class ApiToolHandler:
         # 2. 调用服务创建API工具
         self.api_tool_service.create_api_tool(req)
         return success_message("创建自定义api插件成功")
+
+    def get_api_tool(self, provider_id: UUID, tool_name: str):
+        """根据传递的provider_id + tool_name 获取工具的详情"""
+        api_tool = self.api_tool_service.get_api_tool(provider_id, tool_name)
+        resp = GetApiToolResp()
+        return success_json(resp.dump(api_tool))
 
     def get_api_tool_provider(self, provider_id: UUID):
         """根据传递的provider_id获取工具提供者的原始信息"""

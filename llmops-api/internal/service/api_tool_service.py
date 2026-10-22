@@ -24,6 +24,20 @@ class ApiToolService:
     """自定义API插件服务"""
     db: SQLAlchemy
 
+    def get_api_tool(self, provider_id: UUID, tool_name: str) -> ApiTool:
+        """根据传递的provider_id + tool_name获取对应工具的参数详情信息"""
+        # todo:等待授权认证模块完成进行切换调整
+        account_id = "46db30d1-3199-4e79-a0cd-abf12fa6858f"
+
+        api_tool = self.db.session.query(ApiTool).filter_by(
+            provider_id=provider_id,
+            name=tool_name
+        ).one_or_none()
+
+        if api_tool is None or str(api_tool.account_id) != account_id:
+            raise NotFoundException("该工具不存在")
+        return api_tool
+
     def get_api_tool_provider(self, provider_id: UUID) -> ApiToolProvider:
         """根据传递的provider_id获取API工具提供者信息"""
         # todo:等待授权认证模块完成进行切换调整

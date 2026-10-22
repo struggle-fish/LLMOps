@@ -70,3 +70,8 @@ class ApiTool(db.Model):
         nullable=False,
     )
     created_at = Column(DateTime, default=datetime.now, nullable=False)
+
+    @property
+    def provider(self) -> "ApiToolProvider":
+        """只读属性，返回当前工具关联/归属的工具提供者信息"""
+        return db.session.query(ApiToolProvider).get(self.provider_id)
