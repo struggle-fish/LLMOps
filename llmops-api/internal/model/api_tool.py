@@ -34,7 +34,7 @@ class ApiToolProvider(db.Model):
     name = Column(String(255), default="", nullable=False)
     icon = Column(String(255), default="", nullable=False)
     description = Column(Text, default="", nullable=False)
-    openai_schema = Column(Text, default="", nullable=False)
+    openapi_schema = Column(Text, default="", nullable=False)
     headers = Column(JSONB, default=lambda: [], nullable=False)
     updated_at = Column(
         DateTime,

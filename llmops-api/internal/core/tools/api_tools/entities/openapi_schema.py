@@ -129,7 +129,7 @@ class OpenAPISchema(BaseModel):
         """校验paths信息，涵盖：方法提取，operationId唯一标识，parameters校验"""
         # 1. paths 不为空且类型为字典
         if not paths or not isinstance(paths, dict):
-            raise ValidationErrorException("openai_schema中的paths不能为空且必须是字典")
+            raise ValidationErrorException("openapi_schema中的paths不能为空且必须是字典")
 
         # 2. 提取paths里的每一项，并获取元素下的get / post方法对应的值
         methods = ["get", "post"]

@@ -4,11 +4,13 @@
 @File   : api_tool_schema.py
 """
 
+from marshmallow import Schema, fields, pre_dump
 from flask_wtf import FlaskForm
 from wtforms import StringField, ValidationError
 from wtforms.validators import DataRequired, Length, URL
 
 from .schema import ListField
+from ..model import ApiToolProvider
 
 
 class ValidateOpenAPISchemaReq(FlaskForm):
@@ -44,3 +46,25 @@ class CreateApiToolReq(FlaskForm):
                 raise ValidationError("header里的每一个元素都必须是字典")
             if set(header.keys()) != {"key", "value"}:
                 raise ValidationError("headers里的每一个元素都必须包含key/value两个属性，不允许有其他属性")
+
+
+class GetApiToolProviderResq(Schema):
+    """获取 Api 工具提供者响应信息"""
+    id = fields.UUID()
+    name = fields.String()
+    icon = fields.String()
+    openapi_schema = fields.String()
+    headers = fields.List(fields.Dict, dump_default=[])
+    created_at = fields.Integer(dump_default=0)
+
+    @pre_dump
+    def process_data(self, data: ApiToolProvider, **kwargs):
+        """"""
+        return {
+            "id": data.id,
+            "name": data.name,
+            "icon": data.icon,
+            "openapi_schema": data.openapi_schema,
+            "headers": data.headers,
+            "created_at": int(data.created_at.timestamp())
+        }

@@ -60,7 +60,7 @@ class AccountOAuth(db.Model):
 - 只使用用户使用的语言进行回答，不使用其他语言。
 - 确保回答的针对性和专业性。
 
-用户的需求是：api_tool_provider(表名)，涵盖account_id, name（提供者名字），icon(提供者图标URL地址)，description(提供者描述)，openai_schema(接口的openapi规范描述)、headers（api接口需要headers请求头数据，类型为列表，默认值是[]）,其中account_id+name是索引
+用户的需求是：api_tool_provider(表名)，涵盖account_id, name（提供者名字），icon(提供者图标URL地址)，description(提供者描述)，openapi_schema(接口的openapi规范描述)、headers（api接口需要headers请求头数据，类型为列表，默认值是[]）,其中account_id+name是索引
 
 
 
