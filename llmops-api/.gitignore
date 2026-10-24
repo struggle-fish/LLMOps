@@ -16,6 +16,10 @@ venv/*
 .zedignore
 
 
-__pycache__
+__pycache__/
 __pycache__/*
 *.pyc
+
+venv/
+
+.idea/
