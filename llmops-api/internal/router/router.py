@@ -25,8 +25,12 @@ class Router:
         bp = Blueprint('llmops', __name__, url_prefix='')
 
         # 2. 将url与对应的控制器方法做绑定
-        bp.add_url_rule('/ping', view_func=self.app_handler.ping, methods=['GET'])
-        bp.add_url_rule('/apps/<uuid:app_id>/debug', view_func=self.app_handler.debug, methods=['POST', 'OPTIONS'])
+        bp.add_url_rule('/ping',
+                        methods=['GET'],
+                        view_func=self.app_handler.ping)
+        bp.add_url_rule('/apps/<uuid:app_id>/debug',
+                        methods=['POST', 'OPTIONS'],
+                        view_func=self.app_handler.debug)
 
         # bp.add_url_rule('/app', view_func=self.app_handler.create_app, methods=['POST'])
         # bp.add_url_rule('/app/<uuid:id>', view_func=self.app_handler.get_app, methods=['GET'])
@@ -34,27 +38,50 @@ class Router:
         # bp.add_url_rule('/app/<uuid:id>/delete', view_func=self.app_handler.delete_app, methods=['POST'])
 
         # 3. 内置插件广场模块
-        bp.add_url_rule("/builtin-tools", view_func=self.builtin_tool_handler.get_builtin_tools, methods=['GET'])
+        bp.add_url_rule("/builtin-tools",
+                        methods=['GET'],
+                        view_func=self.builtin_tool_handler.get_builtin_tools)
+
         bp.add_url_rule("/builtin-tools/<string:provider_name>/tools/<string:tool_name>",
-                        view_func=self.builtin_tool_handler.get_provider_tool, methods=['GET'])
+                        methods=['GET'],
+                        view_func=self.builtin_tool_handler.get_provider_tool)
+
         bp.add_url_rule("/builtin-tools/<string:provider_name>/icon",
-                        view_func=self.builtin_tool_handler.get_provider_icon, methods=['GET'])
-        bp.add_url_rule("/builtin-tools/categories", view_func=self.builtin_tool_handler.get_categories,
-                        methods=['GET'])
+                        methods=['GET'],
+                        view_func=self.builtin_tool_handler.get_provider_icon)
+
+        bp.add_url_rule("/builtin-tools/categories",
+                        methods=['GET'],
+                        view_func=self.builtin_tool_handler.get_categories)
 
         # 4. 自定义API插件模块
-        bp.add_url_rule("/api-tools", view_func=self.api_tool_handler.get_api_tool_provider_with_page, methods=['GET'])
+        bp.add_url_rule("/api-tools",
+                        methods=['GET'],
+                        view_func=self.api_tool_handler.get_api_tool_provider_with_page)
 
-        bp.add_url_rule("/api-tools/validate-openapi-schema", view_func=self.api_tool_handler.validate_openapi_schema,
-                        methods=['POST'])
-        bp.add_url_rule("/api-tools", methods=["POST"], view_func=self.api_tool_handler.create_api_tool)
+        bp.add_url_rule("/api-tools/validate-openapi-schema",
+                        methods=['POST'],
+                        view_func=self.api_tool_handler.validate_openapi_schema)
 
-        bp.add_url_rule("/api-tools/<uuid:provider_id>", methods=['GET'],
+        bp.add_url_rule("/api-tools",
+                        methods=["POST"],
+                        view_func=self.api_tool_handler.create_api_tool)
+
+        bp.add_url_rule("/api-tools/<uuid:provider_id>",
+                        methods=['GET'],
                         view_func=self.api_tool_handler.get_api_tool_provider)
-        bp.add_url_rule("/api-tools/<uuid:provider_id>/tools/<string:tool_name>", methods=['GET'],
+
+        bp.add_url_rule("/api-tools/<uuid:provider_id>",
+                        methods=['POST'],
+                        view_func=self.api_tool_handler.update_api_tool_provider)
+
+        bp.add_url_rule("/api-tools/<uuid:provider_id>/tools/<string:tool_name>",
+                        methods=['GET'],
                         view_func=self.api_tool_handler.get_api_tool)
 
-        bp.add_url_rule("/api-tools/<uuid:provider_id>/delete", methods=['POST'], view_func=self.api_tool_handler.delete_api_tool)
+        bp.add_url_rule("/api-tools/<uuid:provider_id>/delete",
+                        methods=['POST'],
+                        view_func=self.api_tool_handler.delete_api_tool)
 
 
 

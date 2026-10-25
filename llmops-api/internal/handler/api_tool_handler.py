@@ -15,7 +15,8 @@ from internal.schema.api_tool_schema import (
     GetApiToolProviderResq,
     GetApiToolResp,
     GetApiToolProvidersWithPageReq,
-    GetApiToolProvidersWithPageResp
+    GetApiToolProvidersWithPageResp,
+    UpdateApiToolProviderReq
 )
 from pkg.paginator import PageModel
 from pkg.response import validate_error_json, success_json, success_message
@@ -51,6 +52,17 @@ class ApiToolHandler:
         # 2. 调用服务创建API工具
         self.api_tool_service.create_api_tool(req)
         return success_message("创建自定义api插件成功")
+
+    def update_api_tool_provider(self, provider_id: UUID):
+        """"更新自定义 API 工具提供者信息"""
+        req = UpdateApiToolProviderReq()
+        if not req.validate():
+            return validate_error_json(req.errors)
+
+        self.api_tool_service.update_api_tool_provider(provider_id, req)
+
+        return success_message("更新自定义 API 插件成功")
+
 
     def get_api_tool(self, provider_id: UUID, tool_name: str):
         """根据传递的provider_id + tool_name 获取工具的详情"""
