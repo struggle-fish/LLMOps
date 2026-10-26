@@ -96,3 +96,12 @@ class TestApiToolHandler:
         })
         assert resp.json["code"] == HttpCode.VALIDATION_ERROR
         assert resp.json["msg"] == "openapi_schema中的paths不能为空且必须是字典"
+
+    def test_delete_api_tool_provider(self, client, db):
+        provider_id = "822c20f5-8704-4ba5-88e3-13810d7c9758"
+        resp = client.post(f"/api-tools/{provider_id}/delete")
+        assert resp.status_code == 200
+
+        from internal.model import ApiToolProvider
+        api_tool_provider = db.session.query(ApiToolProvider).get(provider_id)
+        assert api_tool_provider is None

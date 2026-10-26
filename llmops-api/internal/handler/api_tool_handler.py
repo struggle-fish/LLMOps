@@ -39,11 +39,9 @@ class ApiToolHandler:
 
         resp = GetApiToolProvidersWithPageResp(many=True)
 
-        return success_json(PageModel(list = resp.dump(api_tool_providers), paginator=paginator))
+        return success_json(PageModel(list=resp.dump(api_tool_providers), paginator=paginator))
 
-
-
-    def create_api_tool(self):
+    def create_api_tool_provider(self):
         """创建自定义api工具"""
         # 1. 提取请求的数据并进行校验
         req = CreateApiToolReq()
@@ -62,7 +60,6 @@ class ApiToolHandler:
         self.api_tool_service.update_api_tool_provider(provider_id, req)
 
         return success_message("更新自定义 API 插件成功")
-
 
     def get_api_tool(self, provider_id: UUID, tool_name: str):
         """根据传递的provider_id + tool_name 获取工具的详情"""
