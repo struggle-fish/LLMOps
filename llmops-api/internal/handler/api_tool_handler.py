@@ -48,7 +48,7 @@ class ApiToolHandler:
         if not req.validate():
             return validate_error_json(req.errors)
         # 2. 调用服务创建API工具
-        self.api_tool_service.create_api_tool(req)
+        self.api_tool_service.create_api_tool_provider(req)
         return success_message("创建自定义api插件成功")
 
     def update_api_tool_provider(self, provider_id: UUID):

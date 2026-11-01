@@ -23,7 +23,7 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda, Runnab
 from internal.core.tools.builtin_tools import providers
 from internal.exception import FailException
 from internal.schema.app_schema import CompletionReq
-from internal.service import AppService
+from internal.service import ApiToolService, AppService
 from pkg.response import success_json, validate_error_json, success_message
 
 from internal.core.tools.builtin_tools.providers import BuiltinProviderManager
@@ -43,6 +43,7 @@ class AppHandler:
     """应用控制器"""
     app_service: AppService
     provider_factory: BuiltinProviderManager
+    api_tool_service: ApiToolService
 
     def create_app(self):
         """调用服务创建新的app记录"""
@@ -150,5 +151,6 @@ class AppHandler:
         google_serper_entity = google.get_tool_entity('google_serper')
         print(google_serper_entity)
         """
-        providers = self.provider_factory.get_provider_entities()
-        return success_json({"providers": [provider.dict() for provider in providers]})
+        # providers = self.provider_factory.get_provider_entities()
+        # return success_json({"providers": [provider.dict() for provider in providers]})
+        return self.api_tool_service.api_tool_invoke()

@@ -19,7 +19,7 @@ from internal.schema.api_tool_schema import CreateApiToolReq, GetApiToolProvider
 from pkg.paginator import Paginator
 from pkg.sqlalchemy import SQLAlchemy
 from .base_service import BaseService
-
+from ..core.tools.api_tools.providers import ApiProviderManager
 
 
 @inject
@@ -27,6 +27,7 @@ from .base_service import BaseService
 class ApiToolService(BaseService):
     """自定义API插件服务"""
     db: SQLAlchemy
+    api_provider_manager: ApiProviderManager
 
     def get_api_tool_providers_with_page(self, req: GetApiToolProvidersWithPageReq) -> tuple[list[Any], Paginator]:
         """获取自定义API工具服务提供者分页列表数据"""
@@ -198,3 +199,35 @@ class ApiToolService(BaseService):
             raise ValidationErrorException("传递数据必须符合OpenAPI规范的JSON字符串")
 
         return OpenAPISchema(**data)
+
+
+    def api_tool_invoke(self):
+        """
+        9d810bbe-3660-4284-b541-2aafea74c6c7
+        """
+        provider_id = "9d810bbe-3660-4284-b541-2aafea74c6c7"
+        tool_name = "YoudaoSuggest"
+
+        api_tool = self.db.session.query(ApiTool).filter(
+            ApiTool.provider_id == provider_id,
+            ApiTool.name == tool_name
+        ).one_or_none()
+
+        api_tool_provider = api_tool.provider
+
+        from internal.core.tools.api_tools.entities import ToolEntity
+
+        tool = self.api_provider_manager.get_tool(ToolEntity(
+            id=provider_id,
+            name=tool_name,
+            url = api_tool.url,
+            method = api_tool.method,
+            description = api_tool.description,
+            headers=api_tool_provider.headers,
+            parameters = api_tool.parameters
+        ))
+
+        return tool.invoke({"q": "love", "doctype": "json"})
+
+
+
