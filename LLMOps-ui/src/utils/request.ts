@@ -10,7 +10,7 @@ const TIME_OUT = 100000
 const baseFetchOptions = {
   method: 'GET',
   mode: 'cors',
-  credentials: 'include',
+  credentials: 'omit',
   headers: new Headers({
     'Content-Type': 'application/json'
   }),

@@ -8,6 +8,7 @@
   </p>
   <a-button @click="updateName">更新名字</a-button>
   <a-button @click="accountStore.clear">重置</a-button>
+  <router-link to="/space/tools">我的内置插件广场列表页面</router-link>
 </template>
 <script lang="ts" setup>
 import { useAccountStore } from '@/stores/account'
