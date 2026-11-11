@@ -43,8 +43,8 @@
         <!-- 底部插件列表 -->
         <a-row :gutter="[20, 20]" class="flex-1">
           <!-- 有数据 -->
-          <a-col :span="6" v-for="provider in filterProviders" :key="provider.name">
-            <a-card hoverable class="cursor-pointer rounded-lg">
+          <a-col :span="6" v-for="(provider, idx) in filterProviders" :key="provider.name">
+            <a-card hoverable class="cursor-pointer rounded-lg" @click="showIdx=idx">
               <div class="flex items-center gap-3 mb-3">
                 <a-avatar :size="40" shape="square" :style="{backgroundColor: provider.background}">
                   <img :src="`${apiPrefix}/builtin-tools/${provider.name}/icon`" />
@@ -68,6 +68,58 @@
             <a-empty description="没有可用的内置插件" class="h-[400px] flex flex-col items-center justify-center"/>
           </a-col>
         </a-row>
+
+        <!-- 卡片抽屉 -->
+        <a-drawer 
+
+          :visible="showIdx != -1"
+          :width="350"
+          :footer="false"
+          title="工具详情"
+          @cancel="showIdx = -1"
+          :drawer-style="{background: '#F9FAFB'}">
+          <div v-if="showIdx != -1">
+            <div class="flex items-center gap-3 mb-3">
+              <a-avatar :size="40" shape="square" :style="{backgroundColor: filterProviders[showIdx].background}">
+                <img :src="`${apiPrefix}/builtin-tools/${filterProviders[showIdx].name}/icon`" />
+              </a-avatar>
+              <div class="flex flex-col">
+                <div class="text-base text-gray-900 font-bold">{{filterProviders[showIdx].label}}</div>
+                <div class="text-xs text-gray-500 line-clamp-1">提供商 {{filterProviders[showIdx].name}} . {{ filterProviders[showIdx].tools.length }}</div>
+              </div>
+            </div>
+            <div class="leading-[18px] text-gray-500 mb-2">{{ filterProviders[showIdx].description }}</div>
+            <hr class="my-4 text-gray-300" />
+            <div class="flex flex-col">
+              <div class="mb-3 text-xs text-gray-500">包含{{filterProviders[showIdx].tools.length}}个工具</div>
+              <a-card 
+                  class="cursor-pointer flex flex-col rounded-xl" 
+                  v-for="tool in filterProviders[showIdx].tools"
+                  :key="tool.name">
+                <div class="font-bold text-gray-900 mb-2">{{tool.label}}</div>
+                <div class="text-gray-500 text-xs">{{tool.description}}</div>
+                <div v-if="tool.inputs.length">
+                  <div class="flex items-center gap-2 my-4">
+                    <div class="text-xs font-bold text-gray-500">参数</div>
+                    <hr class="flex-1 text-gray-300" />
+                  </div>
+                  <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-2" v-for="input in tool.inputs" :key="input.name">
+                      <div class="flex items-center gap-2 text-xs">
+                        <div class="font-bold text-gray-900">{{input.name}}</div>
+                        <div class="text-gray-500">{{input.type}}</div>
+                        <div v-if="input.required" class="text-red-700">必填</div>
+                      </div>
+                      <div class="text-xs text-gray-500">
+                         {{input.description}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a-card>
+            </div>
+          </div>
+        </a-drawer>
     </div>
   </a-spin>
 </template>
@@ -82,6 +134,7 @@ const providers = reactive<Array<any>>([])
 const loading = ref<boolean>(false)
 const category = ref<string>('all')
 const search_word = ref<string>('')
+const showIdx = ref<number>(-1)
 
 const filterProviders = computed(() => {
   
