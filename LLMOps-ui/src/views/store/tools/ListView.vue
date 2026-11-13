@@ -90,8 +90,8 @@
             </div>
             <div class="leading-[18px] text-gray-500 mb-2">{{ filterProviders[showIdx].description }}</div>
             <hr class="my-4 text-gray-300" />
-            <div class="flex flex-col">
-              <div class="mb-3 text-xs text-gray-500">包含{{filterProviders[showIdx].tools.length}}个工具</div>
+            <div class="flex flex-col gap-2">
+              <div class="text-xs text-gray-500">包含{{filterProviders[showIdx].tools.length}}个工具</div>
               <a-card 
                   class="cursor-pointer flex flex-col rounded-xl" 
                   v-for="tool in filterProviders[showIdx].tools"
@@ -107,7 +107,7 @@
                     <div class="flex flex-col gap-2" v-for="input in tool.inputs" :key="input.name">
                       <div class="flex items-center gap-2 text-xs">
                         <div class="font-bold text-gray-900">{{input.name}}</div>
-                        <div class="text-gray-500">{{input.type}}</div>
+                        <div class="text-gray-500">{{ typeMap[input.type] }}</div>
                         <div v-if="input.required" class="text-red-700">必填</div>
                       </div>
                       <div class="text-xs text-gray-500">
@@ -129,6 +129,7 @@ import { onMounted, reactive, ref, computed } from 'vue';
 import moment from 'moment'
 import { getCategories, getBuiltinTools } from '@/services/builtin-tool';
 import { apiPrefix } from  '@/config'
+import { typeMap } from '@/config';
 const categories = reactive<Array<any>>([])
 const providers = reactive<Array<any>>([])
 const loading = ref<boolean>(false)
@@ -139,7 +140,6 @@ const showIdx = ref<number>(-1)
 const filterProviders = computed(() => {
   
   let providersData = providers.filter((item) => {
-    console.log(item, 'item')
     const matchCategory = category.value === 'all' || item.category === category.value
 
     const matchSearchWord = search_word.value === '' || item.label.toLowerCase().includes(search_word.value.toLowerCase())
@@ -156,14 +156,14 @@ const filterProviders = computed(() => {
 
 onMounted(async() => {
   const resp = await getCategories()
-  Object.assign(categories, resp.data)
+  categories.push(...resp.data)
 })
 
 onMounted(async() => {
   try {
     loading.value = true
     const resp = await getBuiltinTools()
-    Object.assign(providers, resp.data)
+    providers.push(...resp.data)
   } finally{
     loading.value = false
   }

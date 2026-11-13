@@ -10,4 +10,7 @@
   .scrollbar-w-none {
     scrollbar-width: none;
   }
+  .scrollbar-w-none::-webkit-scrollbar {
+    display: none;
+  }
 }
