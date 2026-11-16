@@ -9,7 +9,9 @@
           >
             <icon-user :size="18" />
           </a-avatar>
-          <div class="text-lg font-medium text-gray-900">个人空间</div>
+          <div class="text-lg font-medium text-gray-900">
+            个人空间
+          </div>
         </div>
         <a-button
           v-if="route.path.startsWith('/space/apps')"
@@ -22,6 +24,7 @@
           v-if="route.path.startsWith('/space/tools')"
           type="primary"
           class="rounded-lg"
+          @click="createType = 'tool'"
         >
           创建自定义插件
         </a-button>
@@ -84,7 +87,10 @@
     </div>
 
     <!-- 中间内容 -->
-    <router-view></router-view>
+    <router-view
+      :create-type="createType"
+      @update-create-type="updateCreateType"
+    ></router-view>
   </div>
 </template>
 <script lang="ts" setup>
@@ -92,7 +98,7 @@
   import { useRoute, useRouter } from 'vue-router'
   const route = useRoute()
   const router = useRouter()
-
+  const createType = ref<string>('')
   const searchWord = ref(route.query?.search_word ?? '')
 
   const handleSearch = (value: string) => {
@@ -103,6 +109,11 @@
       },
     })
   }
+
+  const updateCreateType = (value) => {
+    createType.value = value
+  }
+
   watch(
     () => route.query?.search_word,
     () => {

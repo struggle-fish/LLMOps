@@ -1,7 +1,7 @@
 // 基础响应格式
 export type BaseResponse<T> = {
   code: string
-  message: string
+  msg: string
   data: T
 }
 
